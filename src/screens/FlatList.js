@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, Button } from "react-native";
 import Data from "../components/Data";
 
 export default class List extends Component {
@@ -7,32 +7,39 @@ export default class List extends Component {
     super(props);
 
     this.state = {
-      data: []
+      dataSource: []
     };
   }
 
-  renderItem = ({ item }) => {
-    // console.log(item);
-    return (
-      <View style={styles.container}>
-        <Text>{item.text}</Text>
-      </View>
-    );
-  };
-
   componentDidMount() {
     this.setState({
-      data: Data
+      dataSource: Data
     });
   }
 
+  _renderItem = () => ({ item }) => (
+    <View style={styles.mainView}>
+      <Text style={styles.leftText}>{item.op_number}</Text>
+      <Text style={styles.middleText}>{item.name}</Text>
+
+      <View style={styles.visitBtn}>
+        <Button
+          onPress={() => alert("click")}
+          color={item.status == true ? "#90a4ae" : "#1e88e5"}
+          style={[styles.rightButton]}
+          title={item.status == true ? "Visited" : "Waiting"}
+        />
+      </View>
+    </View>
+  );
+
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <FlatList
-          data={this.state.data}
-          keyExtractor={item => item.id.toString()}
-          renderItem={this.renderItem}
+          data={this.state.dataSource}
+          renderItem={this._renderItem()}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     );
@@ -41,20 +48,27 @@ export default class List extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1
+  },
+  mainView: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    height: 50,
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#003d33",
-    flexDirection: "row"
+    flexDirection: "row",
+    alignItems: "center"
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10
+  leftText: {
+    left: 20
   },
-  instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5
+  middleText: {
+    position: "absolute",
+    left: 90,
+    fontSize: 16,
+    fontWeight: "500"
+  },
+  visitBtn: {
+    width: "19%",
+    marginLeft: 310
   }
 });
